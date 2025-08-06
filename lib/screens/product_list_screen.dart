@@ -15,13 +15,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   void initState() {
     super.initState();
-    _futureProducts = ApiService.fetchProducts();
+    _futureProducts = ApiService.fetchBooks();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ürünler')),
+      appBar: AppBar(title: const Text('Kitaplar')),
       body: FutureBuilder<List<Product>>(
         future: _futureProducts,
         builder: (context, snapshot) {
@@ -30,19 +30,29 @@ class _ProductListScreenState extends State<ProductListScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Hata: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Ürün bulunamadı.'));
+            return const Center(child: Text('Kitap bulunamadı.'));
           }
 
-          final products = snapshot.data!;
+          final books = snapshot.data!;
 
           return ListView.builder(
-            itemCount: products.length,
+            itemCount: books.length,
             itemBuilder: (context, index) {
-              final product = products[index];
+              final book = books[index];
 
               return ListTile(
-                title: Text(product.name),
-                subtitle: Text('Fiyat: ${product.price}'),
+                leading: 
+                    const Icon(Icons.book),
+                title: Text(book.title),
+                subtitle: Text('Yazar: ${book.author}'),
+                trailing: Text('Stok: ${book.stock}'),
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/product',
+                    arguments: book,
+                  );
+                },
               );
             },
           );
